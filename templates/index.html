@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block title %}Apps Developed by Alexis Kirke{% endblock %}
+
+{% block content %}
+    <section id="home">
+        <h1>Apps Developed by Alexis Kirke</h1>
+        <p>Vital Solutions for the A.I. Age</p>
+        <a href="#portfolio" class="cta-button">Explore My Work</a>
+    </section>
+
+    <section id="about">
+        <h2>About Me</h2>
+        <div class="about-content">
+            <img src="{{ url_for('static', filename='images/alexis-kirke.jpg') }}" alt="Alexis Kirke" class="profile-image">
+            <p>Hi! I'm Alexis Kirke. <b>Here's my RIGHT BRAIN</b>: Screenwriter (with BBC Voices, Producer of KINGS SPEECH, BBC Radio, etc). Spoken at London Screenwriter's Festival, Scribe Lounge Labs, TEDx, Royal Institution.<br>
+            <b>Here's my LEFT BRAIN</b>: PhD (AI) Python programmer. Maths degree. LLM, SQL, transformers, Hugging face, Git, Prompt Engineering, Scikit-learn, Pandas, Numpy, PyTorch, Tensorflow, Selenium, Flask, Soup, Django, AWS, Anthropic, OpenAI, Langchain, PyTest, JavaScript, Python, R, HTML. 7 years' experience (mix of consulting, small companies, large corporate, academic.) 4 years R&D management. Great communicator (3*TEDx)..</p>
+        </div>
+    </section>
+
+    <section id="portfolio">
+        <h2>My Portfolio</h2>
+        <div class="portfolio-grid">
+            {% for app in apps %}
+            <div class="portfolio-item">
+                <img src="{{ url_for('static', filename='images/' + app.image) }}" alt="{{ app.name }}">
+                <h3>{{ app.name }}</h3>
+                <p>{{ app.description }}</p>
+                <a href="{{ app.link }}" class="app-link">Learn More</a>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+
+    <section id="contact">
+        <h2>Get in Touch</h2>
+        <form id="contact-form">
+            <input type="text" name="name" placeholder="Your Name" required>
+            <input type="email" name="email" placeholder="Your Email" required>
+            <textarea name="message" placeholder="Your Message" required></textarea>
+            <button type="submit">Send Message</button>
+        </form>
+    </section>
+{% endblock %}

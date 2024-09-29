@@ -1,0 +1,223 @@
+{% extends "base.html" %}
+
+{% block title %}Meditation Generator (AI) - Alexis Kirke{% endblock %}
+
+{% block content %}
+<section id="meditation-generator" class="container my-5">
+    <h1 class="text-center mb-4">Meditation Generator (AI)</h1>
+    <p class="lead text-center mb-4">An app that uses AI to generate spoken meditation audio files with music or binaural beats.</p>
+    
+    <!-- Add the image here -->
+    <div class="row justify-content-center mb-5">
+        <div class="col-md-10 col-lg-8">
+            <img src="{{ url_for('static', filename='images/Meditation.jpg') }}" alt="Meditation" class="img-fluid rounded shadow-lg" style="width: 100%; max-height: 300px; object-fit: cover;">
+        </div>
+    </div>
+    
+    <div class="row justify-content-center">
+        <div class="col-md-10 col-lg-8">
+            <div style="border: 2px solid #007bff; padding: 0em; border-radius: 0.5em; max-width: 100%;">
+                <form id="meditation-form" class="bg-light" style="padding: 2em">
+                    <!-- Add OpenAI API Key input -->
+                    <div class="mb-3">
+                        <label for="api_key" class="form-label">OpenAI API Key</label>
+                        <div class="input-group">
+                            <input type="password" class="form-control" id="api_key" name="api_key" required placeholder="Enter your OpenAI API Key">
+                            <button class="btn btn-outline-secondary" type="button" id="toggleApiKey">Show</button>
+                        </div>
+                        <small class="form-text text-muted">
+                            Don't have an API key? <a href="https://platform.openai.com/account/api-keys" target="_blank" rel="noopener noreferrer">Create one here</a>
+                        </small>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="topic" class="form-label">Meditation Topic</label>
+                        <input type="text" class="form-control" id="topic" name="topic" required
+                            placeholder="e.g., A calming stroll through Hobbiton in the Shire" style="width: 75%;">
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="length" class="form-label">Meditation Length (minutes)</label>
+                            <input type="number" class="form-control" id="length" name="length" min="1" max="60" value="5" style="width: 25%;" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="num_sentences" class="form-label" >Sentences per Segment</label>
+                            <input type="number" class="form-control" id="num_sentences" name="num_sentences" min="1" max="20" value="7" style="width: 25%;" required>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="two_voices" name="two_voices">
+                            <label class="form-check-label" for="two_voices">Use two different voices</label>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="in_spanish" name="in_spanish">
+                            <label class="form-check-label" for="in_spanish">Generate in Spanish</label>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="binaural" name="binaural">
+                            <label class="form-check-label" for="binaural">Use binaural beats (if unchecked will use copyright-free ambient music)</label>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="pan_voices" name="pan_voices">
+                            <label class="form-check-label" for="pan_voices">Pan guidance phrases from side to side</label>
+                        </div>
+                    </div>
+                    
+                    <div id="binaural-options" class="mb-3 p-3 border rounded" style="display: none;">
+                        <b class="mb-3">Binaural Beat Options</b>
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <label for="start_beat_freq" class="form-label">Start Frequency (Hz)</label>
+                                <input type="number" class="form-control" id="start_beat_freq" name="start_beat_freq" min="0" max="40" step="0.1" value="10">
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label for="end_beat_freq" class="form-label">End Frequency (Hz)</label>
+                                <input type="number" class="form-control" id="end_beat_freq" name="end_beat_freq" min="0" max="40" step="0.1" value="4">
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label for="base_freq" class="form-label">Base Frequency (Hz)</label>
+                                <input type="number" class="form-control" id="base_freq" name="base_freq" min="20" max="1000" step="1" value="200">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div id="pan-options" class="mb-3 p-3 border rounded" style="display: none;">
+                        <b class="mb-3">Voice Panning Options</b>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="pan_voice1" class="form-label">Even Phrases Pan (-1 to 1)</label>
+                                <input type="number" class="form-control" id="pan_voice1" name="pan_voice1" min="-1" max="1" step="0.1" value="-0.5">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="pan_voice2" class="form-label">Odd Phrases Pan (-1 to 1)</label>
+                                <input type="number" class="form-control" id="pan_voice2" name="pan_voice2" min="-1" max="1" step="0.1" value="0.5">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3"></div> <!-- This empty div adds an extra line of space -->
+                    <div class="mb-3"></div> <!-- This second empty div adds another line of space -->
+                    <br>
+                    <div class="text-center">
+                        <button type="submit" class="btn btn-primary btn-lg">Generate Meditation</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const binauralCheckbox = document.getElementById('binaural');
+    const binauralOptions = document.getElementById('binaural-options');
+    const panVoicesCheckbox = document.getElementById('pan_voices');
+    const panOptions = document.getElementById('pan-options');
+    
+    binauralCheckbox.addEventListener('change', function() {
+        binauralOptions.style.display = this.checked ? 'block' : 'none';
+    });
+    
+    panVoicesCheckbox.addEventListener('change', function() {
+        panOptions.style.display = this.checked ? 'block' : 'none';
+    });
+    
+    document.getElementById('meditation-form').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const form = this;
+        const submitButton = form.querySelector('button[type="submit"]');
+        const originalButtonText = submitButton.innerHTML;
+        
+        // Change button text and add spinning icon
+        submitButton.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> GENERATING (WAIT 3 MINUTES)';
+        submitButton.disabled = true;
+
+        // Collect form data
+        const formData = new FormData(form);
+
+        // Send request to backend
+        fetch('/generate_meditation', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            // Handle the response from the server
+            if (data.success) {
+                const topic = formData.get('topic');
+                const fileName = `${topic.substring(0, 20).replace(/ /g, '_')}_meditation_text_merged_fx_mixed.mp3`;
+                const downloadLink = document.createElement('a');
+                downloadLink.href = `/download_meditation/${fileName}`;
+                downloadLink.textContent = 'Download Meditation MP3';
+                downloadLink.className = 'btn btn-success mt-3 d-block mx-auto';
+                downloadLink.style.width = 'fit-content';
+                
+                // Create a container for the download link
+                const downloadContainer = document.createElement('div');
+                downloadContainer.className = 'text-center';
+                downloadContainer.appendChild(downloadLink);
+                
+                // Insert the download container after the submit button
+                submitButton.parentNode.insertAdjacentElement('afterend', downloadContainer);
+                
+                alert('Meditation generated successfully! Click the download button to get your MP3.');
+
+                // Add click event listener to delete the file after download
+                downloadLink.addEventListener('click', function() {
+                    setTimeout(() => {
+                        fetch(`/delete_meditation/${fileName}`, { method: 'POST' })
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data.success) {
+                                    console.log('File deleted from server');
+                                } else {
+                                    console.error('Error deleting file:', data.error);
+                                }
+                            })
+                            .catch(error => console.error('Error:', error));
+                    }, 5000); // Wait 5 seconds before sending delete request
+                });
+            } else {
+                alert('Error generating meditation: ' + data.error);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred while generating the meditation.');
+        })
+        .finally(() => {
+            // Reset button state
+            submitButton.innerHTML = originalButtonText;
+            submitButton.disabled = false;
+        });
+    });
+
+    // Add toggle functionality for API Key visibility
+    const apiKeyInput = document.getElementById('api_key');
+    const toggleApiKeyButton = document.getElementById('toggleApiKey');
+
+    toggleApiKeyButton.addEventListener('click', function() {
+        if (apiKeyInput.type === 'password') {
+            apiKeyInput.type = 'text';
+            toggleApiKeyButton.textContent = 'Hide';
+        } else {
+            apiKeyInput.type = 'password';
+            toggleApiKeyButton.textContent = 'Show';
+        }
+    });
+});
+</script>
+
+{% endblock %}
