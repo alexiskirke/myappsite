@@ -8,22 +8,27 @@
         <p>Vital Solutions for the A.I. Age</p>
         <a href="#portfolio" class="cta-button">Explore My Work</a>
     </section>
-
-    <section id="about">
+    <section id="about" style="text-align: center;">
         <h2>About Me</h2>
-        <div class="about-content">
+    
+        <div class="profile-image-container" style="margin: 0 auto;">
             <img src="{{ url_for('static', filename='images/alexis-kirke.jpg') }}" alt="Alexis Kirke" class="profile-image">
-            <p>Hi! I'm Alexis Kirke. <b>Here's my RIGHT BRAIN</b>: Screenwriter (with BBC Voices, Producer of KINGS SPEECH, BBC Radio, etc). Spoken at London Screenwriter's Festival, Scribe Lounge Labs, TEDx, Royal Institution.<br>
-            <b>Here's my LEFT BRAIN</b>: PhD (AI) Python programmer. Maths degree. LLM, SQL, transformers, Hugging face, Git, Prompt Engineering, Scikit-learn, Pandas, Numpy, PyTorch, Tensorflow, Selenium, Flask, Soup, Django, AWS, Anthropic, OpenAI, Langchain, PyTest, JavaScript, Python, R, HTML. 7 years' experience (mix of consulting, small companies, large corporate, academic.) 4 years R&D management. Great communicator (3*TEDx)..</p>
+        </div>
+        <div class="about-content" style="display: flex; flex-direction: column; align-items: center;">
+            <div class="about-text" style="max-width: 800px; margin: 0 auto; text-align: justify; text-align-last: center;">
+                <br><p style="text-align: center;">Hi! I'm Alexis Kirke.</p>
+                <p><b>Here's my RIGHT BRAIN</b><br> Screenwriter (with BBC Voices, Producer of KINGS SPEECH, BBC Radio, etc). Spoken at London Screenwriter's Festival, Scribe Lounge Labs, TEDx, Royal Institution.</p>
+                <p><b>Here's my LEFT BRAIN</b><br> PhD (AI) Python programmer. Maths degree. LLM, SQL, transformers, Hugging face, Git, Prompt Engineering, Scikit-learn, Pandas, Numpy, PyTorch, Tensorflow, Selenium, Flask, Soup, Django, AWS, Anthropic, OpenAI, Langchain, PyTest, JavaScript, Python, R, HTML. 7 years' experience (mix of consulting, small companies, large corporate, academic.) 4 years R&D management. Great communicator (3*TEDx).</p>
+            </div>
         </div>
     </section>
 
     <section id="portfolio">
-        <h2>My Portfolio</h2>
+        <h2>My Apps</h2>
         <div class="portfolio-grid">
             {% for app in apps %}
             <div class="portfolio-item">
-                <img src="{{ url_for('static', filename='images/' + app.image) }}" alt="{{ app.name }}">
+                <a href="{{ app.link }}"><img src="{{ url_for('static', filename='images/' + app.image) }}" alt="{{ app.name }}"></a>
                 <h3>{{ app.name }}</h3>
                 <p>{{ app.description }}</p>
                 <a href="{{ app.link }}" class="app-link">Learn More</a>
@@ -34,11 +39,7 @@
 
     <section id="contact">
         <h2>Get in Touch</h2>
-        <form id="contact-form">
-            <input type="text" name="name" placeholder="Your Name" required>
-            <input type="email" name="email" placeholder="Your Email" required>
-            <textarea name="message" placeholder="Your Message" required></textarea>
-            <button type="submit">Send Message</button>
-        </form>
+        <p style="text-align: center;">To reach out, you can contact me at: alexiskirke2+pe [at] gmail [dot] com</p>
+        
     </section>
 {% endblock %}
